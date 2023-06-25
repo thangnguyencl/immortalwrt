@@ -29,6 +29,10 @@
 			pinctrl-names = "default";
 		};
 
+		ess-psgmii@98000 {
+			status = "okay";
+		};
+
 		tcsr@1949000 {
 			compatible = "qcom,tcsr";
 			reg = <0x1949000 0x100>;
@@ -68,10 +72,20 @@
 		watchdog@b017000 {
 			status = "okay";
 		};
+
+		ess-switch@c000000 {
+			status = "okay";
+		};
+
+		edma@c080000 {
+			status = "okay";
+		};
 	};
 
 	leds {
 		compatible = "gpio-leds";
+		pinctrl-0 = <&led_pins>;
+		pinctrl-names = "default";
 
 		led_sys: led-0 {
 			label = "blue:sys";
@@ -179,28 +193,10 @@
 
 				precal_art_1000: precal@1000 {
 					reg = <0x1000 0x2f20>;
-				};
+			};
 
 				precal_art_5000: precal@5000 {
 					reg = <0x5000 0x2f20>;
-				};
-			};
-		};
-	};
-};
-
-&nand {
-	status = "okay";
-
-	nand@0 {
-		partitions {
-			compatible = "fixed-partitions";
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			nand_rootfs: partition@0 {
-				label = "ubi";
-				/* reg defined in 64M/128M variant dts. */
 			};
 		};
 	};
@@ -216,11 +212,38 @@
 	status = "okay";
 };
 
+&nand {
+	status = "okay";
+
+	nand@0 {
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			nand_rootfs: partition@0 {
+				label = "ubi";
+				/* reg defined in 64M/128M variant dts. */
+			};
+			};
+		};
+	};
+
+&blsp1_uart1 {
+	pinctrl-0 = <&serial_0_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+&cryptobam {
+	status = "okay";
+};
+
 &pcie0 {
 	status = "okay";
-	pinctrl-names = "default";
 	pinctrl-0 = <&pcie_pins>;
-	perst-gpio = <&tlmm 4 GPIO_ACTIVE_LOW>;
+	pinctrl-names = "default";
+	perst-gpio = <&tlmm 4 GPIO_ACTIVE_HIGH>;
 	wake-gpio = <&tlmm 40 GPIO_ACTIVE_HIGH>;
 
 	/* Free slot for use */
@@ -248,8 +271,8 @@
 		mux {
 			pins = "gpio2";
 			function = "gpio";
-			output-low;
 			bias-pull-down;
+			output-low;
 		};
 	};
 
