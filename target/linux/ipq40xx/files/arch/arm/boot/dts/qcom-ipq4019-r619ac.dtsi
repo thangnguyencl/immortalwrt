@@ -228,19 +228,25 @@
 };
 
 &pcie0 {
-	status = "okay";
-	pinctrl-0 = <&pcie_pins>;
-	pinctrl-names = "default";
-	perst-gpio = <&tlmm 4 GPIO_ACTIVE_HIGH>;
-	wake-gpio = <&tlmm 40 GPIO_ACTIVE_HIGH>;
+        status = "okay";
 
-	/* Free slot for use */
-	bridge@0,0 {
-		reg = <0x00000000 0 0 0 0>;
-		#address-cells = <3>;
-		#size-cells = <2>;
-		ranges;
-	};
+        perst-gpio = <&tlmm 4 GPIO_ACTIVE_LOW>;
+        wake-gpio = <&tlmm 40 GPIO_ACTIVE_HIGH>;
+
+       pinctrl-0 = <&pcie_pins>;
+       pinctrl-names = "default";
+
+        bridge@0,0 {
+                reg = <0x00000000 0 0 0 0>;
+                #address-cells = <3>;
+                #size-cells = <2>;
+                ranges;
+
+                wifi2: wifi@1,0 {
+                        compatible = "qcom,ath10k";
+                        reg = <0x00010000 0 0 0 0>;
+                };
+        };
 };
 
 &qpic_bam {
